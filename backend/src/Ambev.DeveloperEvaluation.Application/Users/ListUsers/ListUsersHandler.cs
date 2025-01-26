@@ -1,7 +1,7 @@
-using AutoMapper;
-using MediatR;
-using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using AutoMapper;
+using FluentValidation;
+using MediatR;
 using static Ambev.DeveloperEvaluation.Application.Users.ListUsers.ListUsersResult;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.ListUsers;
@@ -41,16 +41,17 @@ public class ListUsersHandler : IRequestHandler<ListUsersCommand, ListUsersResul
 
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
-        
+
         var orderDescending = request.Order?.Contains("desc") ?? false;
         var users = await _userRepository.GetPagedUsersAsync(request.Page, request.Size, request.Order, orderDescending, cancellationToken);
         var totalUsers = await _userRepository.GetTotalUsersCountAsync(cancellationToken);
+        var totalPages = (int)Math.Ceiling((double)totalUsers / request.Size);
 
         var result = new ListUsersResult
         {
             Users = _mapper.Map<List<UserResult>>(users),
             CurrentPage = request.Page,
-            TotalPages = request.Size,
+            TotalPages = totalPages,
             TotalItems = totalUsers
         };
 

@@ -1,12 +1,14 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.ListProducts;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
-using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.ListProducts;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.UpdateProduct;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -120,5 +122,71 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Produtcs
             });
         }
 
+        /// <summary>
+        /// Deletes a product by their ID
+        /// </summary>
+        /// <param name="id">The unique identifier of the product to delete</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Success response if the product was deleted</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var request = new DeleteProductRequest { Id = id };
+            var validator = new DeleteProductRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<DeleteProductCommand>(request.Id);
+            await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Product deleted successfully"
+            });
+        }
+
+        /// <summary>
+        /// Retrieves a list of all products
+        /// </summary>
+        /// <param name="page">(optional): Page number for pagination (default: 1)</param>
+        /// <param name="size">(optional): Number of items per page (default: 10)</param>
+        /// <param name="order">(optional): Ordering of results (e.g., "username asc, email desc")</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The user details if found</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResponseWithData<ListProductsResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProducts([FromQuery] int? page, [FromQuery] int? size, [FromQuery] string? order, CancellationToken cancellationToken)
+        {
+            var request = new ListProductsRequest
+            {
+                Page = page ?? 1,
+                Size = size ?? 10,
+                Order = order
+            };
+            var validator = new ListProductsRequestValidator();
+
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<ListProductsCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<ListProductsResponse>
+            {
+                Success = true,
+                Message = "Products retrieved successfully",
+                Data = _mapper.Map<ListProductsResponse>(response)
+            });
+        }
     }
 }

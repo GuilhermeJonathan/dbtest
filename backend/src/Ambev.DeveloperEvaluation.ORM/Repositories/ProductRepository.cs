@@ -113,7 +113,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The total count of products</returns>
-        public async Task<int> GetTotalUsersCountAsync(CancellationToken cancellationToken = default)
+        public async Task<int> GetTotalCountAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Products.CountAsync(cancellationToken);
         }

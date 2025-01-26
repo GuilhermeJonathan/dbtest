@@ -15,6 +15,6 @@ public class UpdateProductProfile : Profile
     {
         CreateMap<UpdateProductRequest, UpdateProductCommand>();
         CreateMap<UpdateProductResult, UpdateProductResponse>();
-        CreateMap<UpdateProductResult.RatingResult, UpdateProductResponse.RatingResponse>().ReverseMap();
+        CreateMap<UpdateProductResult.RatingResult, UpdateProductResponse.UpdateProductRatingResponse>().ReverseMap();
     }
 }

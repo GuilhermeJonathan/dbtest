@@ -38,22 +38,18 @@ public class UpdateProductResponse
     /// <summary>
     /// The product's rating
     /// </summary>    
-    //public RatingResponse Rating { get; set; } = new RatingResponse();
+    public UpdateProductRatingResponse Rating { get; set; } = new UpdateProductRatingResponse();
 
-    public class RatingResponse
+    public class UpdateProductRatingResponse
     {
-        public RatingResponse()
-        {
-            
-        }
-        ///// <summary>
-        ///// The product's Rate
-        ///// </summary>
-        //public decimal Rate { get; set; } = 0;
+        /// <summary>
+        /// The product's Rate
+        /// </summary>
+        public decimal Rate { get; set; } = 0;
 
-        ///// <summary>
-        ///// The product's Count
-        ///// </summary>
-        //public int Count { get; set; } = 0;
+        /// <summary>
+        /// The product's Count
+        /// </summary>
+        public int Count { get; set; } = 0;
     }
 }
