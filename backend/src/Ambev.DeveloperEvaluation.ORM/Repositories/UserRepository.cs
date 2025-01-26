@@ -87,7 +87,7 @@ public class UserRepository : IUserRepository
         return true;
     }
 
-    // <summary>
+    /// <summary>
     /// Retrieves a paginated and ordered list of users
     /// </summary>
     /// <param name="pageNumber">The page number</param>

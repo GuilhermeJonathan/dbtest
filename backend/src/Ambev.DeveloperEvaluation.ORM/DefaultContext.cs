@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ namespace Ambev.DeveloperEvaluation.ORM;
 public class DefaultContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {
@@ -39,6 +41,15 @@ public class DefaultContext : DbContext
                     geo.Property(g => g.Lat).HasColumnName("Lat");
                     geo.Property(g => g.Long).HasColumnName("Long");
                 });
+            });
+        });
+        
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.OwnsOne(e => e.Rating, rating =>
+            {
+                rating.Property(n => n.Count).HasColumnName("Count");
+                rating.Property(n => n.Rate).HasColumnName("Rate");
             });
         });
     }
