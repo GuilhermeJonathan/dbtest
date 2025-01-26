@@ -56,14 +56,23 @@ public class CreateCartHandler : IRequestHandler<CreateCartCommand, CreateCartRe
             var listProducts = new List<ProductCart>();
             foreach (var item in command.Products)
             {
+                if (item.Quantity > 20)
+                    throw new InvalidOperationException("It's not possible to sell above 20 identical items");
+                
                 var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
                 if (product == null)
                     throw new KeyNotFoundException($"Product with ID {item.ProductId} not found");
 
+                var discount = DiscountCalculator.CalculateDiscount(item.Quantity);
+                var discountedPrice = product.Price * (1 - discount);
+
                 var productCart = new ProductCart()
                 {
                     Product = product,
-                    Quantity = item.Quantity
+                    Quantity = item.Quantity,
+                    Price = product.Price,
+                    Discount = discount,
+                    TotalPrice = discountedPrice * item.Quantity
                 };
 
                 listProducts.Add(productCart);

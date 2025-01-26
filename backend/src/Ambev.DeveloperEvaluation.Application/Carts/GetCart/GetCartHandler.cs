@@ -53,7 +53,10 @@ public class GetCartHandler : IRequestHandler<GetCartCommand, GetCartResult>
             Products = cart.ProductsCart.Select(o => new GetCartResult.ProductsResult
             {
                 ProductId = o.Id,
-                Quantity = o.Quantity
+                Quantity = o.Quantity,
+                Price = o.Price,
+                TotalPrice = o.TotalPrice,
+                Discount = o.Discount
             }).ToList()
         };
     }

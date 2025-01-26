@@ -23,6 +23,21 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
         public int Quantity { get; set; } = 0;
 
         /// <summary>
+        /// Gets the ProductCart's Price.
+        /// </summary>
+        public decimal Price { get; set; } = 0;
+
+        /// <summary>
+        /// Gets the ProductCart's TotalPrice.
+        /// </summary>
+        public decimal TotalPrice { get; set; } = 0;
+
+        /// <summary>
+        /// Gets the ProductCart's Discount.
+        /// </summary>
+        public decimal Discount { get; set; } = 0;
+
+        /// <summary>
         /// Gets the date and time when the product was created.
         /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

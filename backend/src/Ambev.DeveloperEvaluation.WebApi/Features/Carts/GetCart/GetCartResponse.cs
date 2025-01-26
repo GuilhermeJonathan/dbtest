@@ -36,5 +36,20 @@ public class GetCartResponse
         /// The product's quantity
         /// </summary>
         public int Quantity { get; set; }
+
+        /// <summary>
+        /// The product's Price
+        /// </summary>
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// Gets the ProductCart's TotalPrice.
+        /// </summary>
+        public decimal TotalPrice { get; set; } = 0;
+
+        /// <summary>
+        /// The product's Discount
+        /// </summary>
+        public decimal Discount { get; set; }
     }
 }

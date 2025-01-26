@@ -33,6 +33,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
         public DateTime UpdatedAt { get; set; }
 
         /// <summary>
+        /// Gets the date and time when the product was finished.
+        /// </summary>
+        public DateTime FinishedAt { get; set; }
+
+        /// <summary>
         /// Gets the cart's User.
         /// </summary>
         public User User { get; set; }
