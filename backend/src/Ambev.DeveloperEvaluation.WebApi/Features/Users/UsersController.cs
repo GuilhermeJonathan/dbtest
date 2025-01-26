@@ -8,6 +8,10 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
+using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.ListUsers;
+using Ambev.DeveloperEvaluation.Application.Users.ListUsers;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
@@ -61,6 +65,34 @@ public class UsersController : BaseController
     }
 
     /// <summary>
+    /// Updates a user
+    /// </summary>
+    /// <param name="request">The user update request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated user details</returns>
+    [HttpPut]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateUserResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new UpdateUserRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateUserCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<UpdateUserResponse>
+        {
+            Success = true,
+            Message = "User updated successfully",
+            Data = _mapper.Map<UpdateUserResponse>(response)
+        });
+    }
+
+    /// <summary>
     /// Retrieves a user by their ID
     /// </summary>
     /// <param name="id">The unique identifier of the user</param>
@@ -87,6 +119,43 @@ public class UsersController : BaseController
             Success = true,
             Message = "User retrieved successfully",
             Data = _mapper.Map<GetUserResponse>(response)
+        });
+    }
+
+    /// <summary>
+    /// Retrieves a list of all users
+    /// </summary>
+    /// <param name="page">(optional): Page number for pagination (default: 1)</param>
+    /// <param name="size">(optional): Number of items per page (default: 10)</param>
+    /// <param name="order">(optional): Ordering of results (e.g., "username asc, email desc")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The user details if found</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListUsersResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUsers([FromQuery] int? page, [FromQuery] int? size, [FromQuery] string? order, CancellationToken cancellationToken)
+    {
+        var request = new ListUsersRequest { 
+            Page = page ?? 1,
+            Size = size ?? 10,
+            Order = order
+        };
+        var validator = new ListUsersRequestValidator();
+
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<ListUsersCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<ListUsersResponse>
+        {
+            Success = true,
+            Message = "Users retrieved successfully",
+            Data = _mapper.Map<ListUsersResponse>(response)
         });
     }
 

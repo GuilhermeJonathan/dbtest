@@ -79,6 +79,16 @@ public class User : BaseEntity, IUser
     string IUser.Role => Role.ToString();
 
     /// <summary>
+    /// Gets or sets the user's name.
+    /// </summary>
+    public Name Name { get; set; } = new Name();
+
+    /// <summary>
+    /// Gets or sets the user's address.
+    /// </summary>
+    public Address Address { get; set; } = new Address();
+
+    /// <summary>
     /// Initializes a new instance of the User class.
     /// </summary>
     public User()
@@ -141,6 +151,42 @@ public class User : BaseEntity, IUser
     public void Suspend()
     {
         Status = UserStatus.Suspended;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetEmail(string email)
+    {
+        Email = email;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetUsername(string userName)
+    {
+        Username = userName;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetPhone(string phone)
+    {
+        Phone = phone;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetRole(UserRole role)
+    {
+        Role = role;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetStatus(UserStatus status)
+    {
+        Status = status;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetPassword(string password)
+    {
+        Password = password;
         UpdatedAt = DateTime.UtcNow;
     }
 }

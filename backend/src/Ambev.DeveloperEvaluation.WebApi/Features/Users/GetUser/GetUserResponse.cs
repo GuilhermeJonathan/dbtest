@@ -15,7 +15,7 @@ public class GetUserResponse
     /// <summary>
     /// The user's full name
     /// </summary>
-    public string Name { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
 
     /// <summary>
     /// The user's email address
@@ -36,4 +36,69 @@ public class GetUserResponse
     /// The current status of the user
     /// </summary>
     public UserStatus Status { get; set; }
+
+    /// <summary>
+    /// The user's Name
+    /// </summary>    
+    public NameResponse Name { get; set; } = new NameResponse();
+
+    /// <summary>
+    /// The user's Address
+    /// </summary> 
+    public AddressResponse Address { get; set; } = new AddressResponse();
+
+
+    public class NameResponse
+    {
+        /// <summary>
+        /// The user's first name
+        /// </summary>
+        public string First { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user's last name
+        /// </summary>
+        public string Last { get; set; } = string.Empty;
+    }
+
+    public class AddressResponse
+    {
+        /// <summary>
+        /// The user's Address City
+        /// </summary>
+        public string City { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user's Address Street
+        /// </summary>
+        public string Street { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user's Address Number
+        /// </summary>
+        public string Number { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user's Address Zipcode
+        /// </summary>
+        public string Zipcode { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user's Address Geolocation
+        /// </summary> 
+        public GeolocationResponse Geolocation { get; set; } = new GeolocationResponse();
+    }
+
+    public class GeolocationResponse
+    {
+        /// <summary>
+        /// The user's Address Lat
+        /// </summary>
+        public string Lat { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user's Address Long
+        /// </summary>
+        public string Long { get; set; } = string.Empty;
+    }
 }
