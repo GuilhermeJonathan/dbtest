@@ -60,5 +60,23 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return cart;
         }
+
+        /// <summary>
+        /// Deletes a Cart from the database
+        /// </summary>
+        /// <param name="id">The unique identifier of the Cart to delete</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if the Cart was deleted, false if not found</returns>
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var cart = await GetByIdAsync(id, cancellationToken);
+            if (cart == null)
+                return false;
+
+            _context.Carts.Remove(cart);
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+
     }
 }
