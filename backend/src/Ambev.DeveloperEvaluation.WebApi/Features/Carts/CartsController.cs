@@ -1,10 +1,12 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+using Ambev.DeveloperEvaluation.Application.Carts.ListCarts;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.DeleteCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.GetCart;
 using AutoMapper;
@@ -149,5 +151,44 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts
             });
         }
 
+        /// <summary>
+        /// Retrieves a list of all carts by user ID
+        /// </summary>
+        /// <param name="page">(optional): Page number for pagination (default: 1)</param>
+        /// <param name="size">(optional): Number of items per page (default: 10)</param>
+        /// <param name="order">(optional): Ordering of results (e.g., "username asc, email desc")</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The user details if found</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResponseWithData<ListCartsResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCarts([FromQuery] Guid userId, [FromQuery] int? page, [FromQuery] int? size, [FromQuery] string? order, CancellationToken cancellationToken)
+        {
+            var request = new ListCartsRequest
+            {
+                UserId = userId,
+                Page = page ?? 1,
+                Size = size ?? 10,
+                Order = order
+            };
+
+            var validator = new ListCartsRequestValidator();
+
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<ListCartsCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<ListCartsResponse>
+            {
+                Success = true,
+                Message = "Carts retrieved successfully",
+                Data = _mapper.Map<ListCartsResponse>(response)
+            });
+        }
     }
 }
