@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories
 {
@@ -31,5 +32,21 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return cart;
         }
+
+        /// <summary>
+        /// Retrieves a cart by their unique identifier
+        /// </summary>
+        /// <param name="id">The unique identifier of the product</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The cart if found, null otherwise</returns>
+        public async Task<Cart?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Carts
+                .Include(a => a.User)
+                .Include(a => a.ProductsCart)
+                .ThenInclude(b => b.Product)
+                .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+        }
+
     }
 }
