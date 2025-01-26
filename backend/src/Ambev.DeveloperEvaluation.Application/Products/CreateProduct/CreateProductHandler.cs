@@ -29,9 +29,9 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
     /// <summary>
     /// Handles the CreateProductCommand request
     /// </summary>
-    /// <param name="command">The CreateUser command</param>
+    /// <param name="command">The CreateProduct command</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The created user details</returns>
+    /// <returns>The created product details</returns>
     public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
         var validator = new CreateProductValidator();
@@ -41,6 +41,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
             throw new ValidationException(validationResult.Errors);
 
         var product = _mapper.Map<Product>(command);
+        product.SetRating(command.Rate, command.Count);
 
         var createdProduct = await _productRepository.CreateAsync(product, cancellationToken);
         var result = _mapper.Map<CreateProductResult>(createdProduct);

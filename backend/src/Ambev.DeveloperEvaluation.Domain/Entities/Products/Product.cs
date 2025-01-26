@@ -19,11 +19,15 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Products
         /// <returns>The user's ID as a string.</returns>
         string IProduct.Id => Id.ToString();
 
-
         /// <summary>
         /// Gets the date and time when the product was created.
         /// </summary>
         public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Gets the date and time when the product was updated.
+        /// </summary>
+        public DateTime UpdatedAt { get; set; }
 
         /// <summary>
         /// Gets the product's Title.
@@ -54,5 +58,44 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Products
         /// Gets or sets the product's rating.
         /// </summary>
         public Rating Rating { get; set; } = new Rating();
+
+        public void SetRating(decimal rate, int count)
+        {
+            Rating = new Rating
+            {
+                Rate = rate,
+                Count = count
+            };
+        }
+
+        public void SetTitle(string title)
+        {
+            Title = title;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetDescription(string description)
+        {
+            Description = description;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetCategory(string category)
+        {
+            Category = category;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetImage(string image)
+        {
+            Image = image;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetPrice(decimal price)
+        {
+            Price = price;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }
