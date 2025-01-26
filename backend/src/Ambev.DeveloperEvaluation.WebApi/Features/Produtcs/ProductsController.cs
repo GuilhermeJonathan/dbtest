@@ -1,17 +1,22 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetByCategory;
+using Ambev.DeveloperEvaluation.Application.Products.GetCategories;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 using Ambev.DeveloperEvaluation.Application.Products.ListProducts;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.DeleteProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.GetByCategory;
+using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.GetCategories;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.ListProducts;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.UpdateProduct;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Produtcs
 {
@@ -186,6 +191,64 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Produtcs
                 Success = true,
                 Message = "Products retrieved successfully",
                 Data = _mapper.Map<ListProductsResponse>(response)
+            });
+        }
+
+        /// <summary>
+        /// Retrieves a list of all categories of products
+        /// </summary>        
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The user details if found</returns>
+        [HttpGet("categories")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetCategoriesResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<GetCategoriesCommand>(new GetCategoriesRequest());
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<GetCategoriesResponse>
+            {
+                Success = true,
+                Message = "Categories retrieved successfully",
+                Data = _mapper.Map<GetCategoriesResponse>(response)
+            });
+        }
+
+        /// <summary>
+        /// Retrieves a list of all categories of products by category
+        /// </summary>        
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The user details if found</returns>
+        [HttpGet("category/{category}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetByCategoryResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByCategory([FromRoute] string category, [FromQuery] int? page, [FromQuery] int? size, [FromQuery] string? order, CancellationToken cancellationToken)
+        {
+            var request = new GetByCategoryRequest
+            {
+                Category = category,
+                Page = page ?? 1,
+                Size = size ?? 10,
+                Order = order
+            };
+
+            var validator = new GetByCategoryRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<GetByCategoryCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<GetByCategoryResponse>
+            {
+                Success = true,
+                Message = "Products retrieved successfully",
+                Data = _mapper.Map<GetByCategoryResponse>(response)
             });
         }
     }

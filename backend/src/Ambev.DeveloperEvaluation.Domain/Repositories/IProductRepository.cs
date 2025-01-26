@@ -6,9 +6,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
     {
         Task<Product> CreateAsync(Product product, CancellationToken cancellationToken = default);
         Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<List<string>> GetAllCategoriesAsync(CancellationToken cancellationToken = default);
         Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-        Task<List<Product>> GetPagedProductsAsync(int pageNumber, int pageSize, string orderByColumn, bool orderByDescending, CancellationToken cancellationToken = default);
-        Task<int> GetTotalCountAsync(CancellationToken cancellationToken = default);
+        Task<List<Product>> GetPagedProductsAsync(int pageNumber, int pageSize, string orderByColumn, bool orderByDescending, 
+            string? category, CancellationToken cancellationToken = default);
+        Task<int> GetTotalCountAsync(string? category, CancellationToken cancellationToken = default);
         Task<Product> UpdateAsync(Product product, CancellationToken cancellationToken = default);
     }
 }

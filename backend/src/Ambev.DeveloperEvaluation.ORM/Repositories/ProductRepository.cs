@@ -84,9 +84,15 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         /// <param name="orderByDescending">Whether to order by descending</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>A paginated and ordered list of product</returns>
-        public async Task<List<Product>> GetPagedProductsAsync(int pageNumber, int pageSize, string orderByColumn, bool orderByDescending, CancellationToken cancellationToken = default)
+        public async Task<List<Product>> GetPagedProductsAsync(int pageNumber, int pageSize, string orderByColumn, 
+            bool orderByDescending, string? category, CancellationToken cancellationToken = default)
         {
             var query = _context.Products.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(category))
+            {
+                query = query.Where(p => p.Category == category);
+            }
 
             if (!string.IsNullOrEmpty(orderByColumn))
             {
@@ -108,14 +114,29 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<int> GetTotalCountAsync(string? category, CancellationToken cancellationToken = default)
+        {
+            var query = _context.Products.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(category))
+            {
+                query = query.Where(p => p.Category == category);
+            }
+
+            return await query.CountAsync(cancellationToken);
+        }
+
         /// <summary>
-        /// Retrieves the total count of products
+        /// Retrieves all distinct categories
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>The total count of products</returns>
-        public async Task<int> GetTotalCountAsync(CancellationToken cancellationToken = default)
+        /// <returns>A list of distinct categories</returns>
+        public async Task<List<string>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Products.CountAsync(cancellationToken);
+            return await _context.Products
+                .Select(p => p.Category)
+                .Distinct()
+                .ToListAsync(cancellationToken);
         }
     }
 }
