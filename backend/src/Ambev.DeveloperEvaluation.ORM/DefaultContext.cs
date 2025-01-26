@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -11,6 +12,8 @@ public class DefaultContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<ProductCart> ProductsCarts { get; set; }
 
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {
@@ -43,7 +46,7 @@ public class DefaultContext : DbContext
                 });
             });
         });
-        
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.OwnsOne(e => e.Rating, rating =>
