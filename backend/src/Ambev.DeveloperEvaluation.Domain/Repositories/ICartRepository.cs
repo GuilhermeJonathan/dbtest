@@ -6,5 +6,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
     {
         Task<Cart> CreateAsync(Cart cart, CancellationToken cancellationToken = default);
         Task<Cart?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<Cart> UpdateAsync(Cart cart, CancellationToken cancellationToken = default);
     }
 }

@@ -1,12 +1,16 @@
-namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+﻿namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 
 /// <summary>
-/// Response model for GetProduct operation
+/// Represents the response returned after successfully updating a Cart.
 /// </summary>
-public class GetCartResult
+/// <remarks>
+/// This response contains the unique identifier of the newly updated Cart,
+/// which can be used for subsequent operations or reference.
+/// </remarks>
+public class UpdateCartResult
 {
     /// <summary>
-    /// The unique identifier of the created product
+    /// The unique identifier of the Cart
     /// </summary>
     public Guid Id { get; set; }
 
@@ -30,7 +34,7 @@ public class GetCartResult
         /// <summary>
         /// The cart's Product
         /// </summary>
-        public Guid ProductId { get; set; } = Guid.Empty;   
+        public Guid ProductId { get; set; } = Guid.Empty;
 
         /// <summary>
         /// The product's quantity

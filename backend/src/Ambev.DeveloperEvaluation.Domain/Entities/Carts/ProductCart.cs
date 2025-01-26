@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
 {
     public class ProductCart : BaseEntity
     {
-        public ProductCart() { }
+        public ProductCart() { CreatedAt = DateTime.UtcNow; }
 
         /// <summary>
         /// Gets the ProductCart's Cart.
@@ -21,5 +21,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
         /// Gets the ProductCart's Quantity.
         /// </summary>
         public int Quantity { get; set; } = 0;
+
+        /// <summary>
+        /// Gets the date and time when the product was created.
+        /// </summary>
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

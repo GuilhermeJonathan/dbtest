@@ -48,5 +48,17 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                 .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
         }
 
+        /// <summary>
+        /// Update a cart in the database
+        /// </summary>
+        /// <param name="cart">The cart to create</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The updated cart</returns>
+        public async Task<Cart> UpdateAsync(Cart cart, CancellationToken cancellationToken = default)
+        {
+            _context.Carts.Update(cart);
+            await _context.SaveChangesAsync(cancellationToken);
+            return cart;
+        }
     }
 }

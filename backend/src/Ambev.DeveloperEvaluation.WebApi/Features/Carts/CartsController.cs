@@ -1,7 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Produtcs.GetCart;
 using AutoMapper;
 using MediatR;
@@ -87,5 +89,34 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts
                 Data = _mapper.Map<GetCartResponse>(response)
             });
         }
+
+        /// <summary>
+        /// Update a cart
+        /// </summary>
+        /// <param name="request">The cart update request</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The updated cart details</returns>
+        [HttpPut]
+        [ProducesResponseType(typeof(ApiResponseWithData<UpdateCartResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCart([FromBody] UpdateCartRequest request, CancellationToken cancellationToken)
+        {
+            var validator = new UpdateCartRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<UpdateCartCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Created(string.Empty, new ApiResponseWithData<UpdateCartResponse>
+            {
+                Success = true,
+                Message = "Cart updated successfully",
+                Data = _mapper.Map<UpdateCartResponse>(response)
+            });
+        }
+
     }
 }
