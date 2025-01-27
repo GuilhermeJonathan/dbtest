@@ -52,6 +52,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
         public List<ProductCart> ProductsCart { get; set; } = new List<ProductCart>();
 
         /// <summary>
+        /// Gets the product's Store.
+        /// </summary>
+        public string Store { get; set; } = string.Empty;
+
+        /// <summary>
         /// Set a User to the cart.
         /// </summary>
         /// <param name="user">The user to add.</param>

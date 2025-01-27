@@ -28,6 +28,11 @@ public class CreateCartCommand : IRequest<CreateCartResult>
     /// </summary>
     public DateTime Date { get; set; } = DateTime.Now;
 
+    /// <summary>
+    /// Gets the cart's Store.    
+    /// </summary>
+    public string Store { get; set; } = String.Empty;
+
     public List<ProductsCartCommand> Products { get; set; } = new List<ProductsCartCommand>();
 
     public class ProductsCartCommand

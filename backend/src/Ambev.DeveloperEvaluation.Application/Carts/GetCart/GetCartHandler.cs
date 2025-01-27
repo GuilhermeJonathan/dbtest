@@ -50,6 +50,7 @@ public class GetCartHandler : IRequestHandler<GetCartCommand, GetCartResult>
             Id = cart.Id,
             UserId = cart.User.Id,   
             Date = cart.CreatedAt,
+            Store = cart.Store,
             Products = cart.ProductsCart.Select(o => new GetCartResult.ProductsResult
             {
                 ProductId = o.Id,

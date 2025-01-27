@@ -14,10 +14,12 @@ public class CreateCartRequestValidator : AbstractValidator<CreateCartRequest>
     /// Validation rules include:    
     /// - UserId: Required
     /// - Date: Required    
+    /// - Store: Required    
     /// </remarks>
     public CreateCartRequestValidator()
     {
         RuleFor(user => user.UserId).NotEmpty();
         RuleFor(user => user.Date).NotEmpty();
+        RuleFor(user => user.Store).NotEmpty();
     }
 }

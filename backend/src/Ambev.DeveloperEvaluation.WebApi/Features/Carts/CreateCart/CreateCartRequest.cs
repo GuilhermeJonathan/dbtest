@@ -15,6 +15,11 @@ public class CreateCartRequest
     /// </summary>
     public DateTime Date { get; set; } = DateTime.Now;
 
+    /// <summary>
+    /// Gets the cart's Store.    
+    /// </summary>
+    public string Store { get; set; } = string.Empty;
+
     public List<ProductsRequest> Products { get; set; } = new List<ProductsRequest>();
 
     public class ProductsRequest

@@ -21,6 +21,11 @@ public class GetCartResult
     public DateTime Date { get; set; }
 
     /// <summary>
+    /// The cart's Store
+    /// </summary>
+    public string Store { get; set; }
+
+    /// <summary>
     /// The cart's Products
     /// </summary>    
     public List<ProductsResult> Products { get; set; } = new List<ProductsResult>();

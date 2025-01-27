@@ -18,7 +18,12 @@ public class GetCartResponse
     /// <summary>
     /// The cart's Date
     /// </summary>
-    public DateTime Date { get; set; } 
+    public DateTime Date { get; set; }
+
+    /// <summary>
+    /// The cart's Store
+    /// </summary>
+    public string Store { get; set; } 
 
     /// <summary>
     /// The cart's products
