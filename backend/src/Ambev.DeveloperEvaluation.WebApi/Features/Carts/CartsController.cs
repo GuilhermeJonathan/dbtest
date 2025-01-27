@@ -1,9 +1,11 @@
-﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
+﻿using Ambev.DeveloperEvaluation.Application.Carts.CloseCart;
+using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
 using Ambev.DeveloperEvaluation.Application.Carts.ListCarts;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CloseCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.DeleteCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts;
@@ -188,6 +190,35 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts
                 Success = true,
                 Message = "Carts retrieved successfully",
                 Data = _mapper.Map<ListCartsResponse>(response)
+            });
+        }
+
+        /// <summary>
+        /// Close a cart by their ID
+        /// </summary>
+        /// <param name="id">The unique identifier of the cart to close</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Success response if the cart was closed</returns>
+        [HttpPut("close/{id}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CloseCart([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var request = new CloseCartRequest { Id = id };
+            var validator = new CloseCartRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<CloseCartCommand>(request.Id);
+            await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Cart closed successfully"
             });
         }
     }

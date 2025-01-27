@@ -61,6 +61,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public void SetClosed()
+        {
+            Status = CartStatus.Closed;
+            FinishedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         /// <summary>
         /// Adds a product to the cart.
         /// </summary>
@@ -69,6 +76,24 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
         {
             ProductsCart.AddRange(productsCart);
             UpdatedAt = DateTime.UtcNow;
+        }
+        
+        /// <summary>
+        /// Calculates the total price for all products in the cart after applying discounts.
+        /// </summary>
+        /// <returns>The total price amount.</returns>
+        public decimal GetTotal()
+        {
+            return ProductsCart.Sum(productCart => productCart.TotalPrice);
+        }
+
+        /// <summary>
+        /// Calculates the total discounts for all products in the cart.
+        /// </summary>
+        /// <returns>The total discount amount.</returns>
+        public decimal GetTotalDisccounts()
+        {
+            return ProductsCart.Sum(productCart => productCart.Discount * productCart.Quantity);
         }
     }
 }

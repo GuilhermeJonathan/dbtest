@@ -42,6 +42,9 @@ public class DeleteCartHandler : IRequestHandler<DeleteCartCommand, DeleteCartRe
         if (existingCart == null)
             throw new InvalidOperationException($"Cart with id {command.Id} not exists");
 
+        if(existingCart.Status != Domain.Enums.CartStatus.Created)        
+           throw new InvalidOperationException($"Cart with id {command.Id} cannot be canceled");
+        
         var deletedProducts = await _productCartRepository.DeleteByCartAsync(command.Id, cancellationToken);
 
         var success = await _cartRepository.DeleteAsync(command.Id, cancellationToken);
