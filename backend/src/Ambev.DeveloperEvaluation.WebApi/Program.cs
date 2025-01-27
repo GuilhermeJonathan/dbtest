@@ -3,6 +3,10 @@ using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales.ItemCancelled;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales.SaleCancelled;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales.SaleCreated;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales.SaleModified;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
@@ -49,6 +53,11 @@ public class Program
                     typeof(Program).Assembly
                 );
             });
+
+            builder.Services.AddScoped<INotificationHandler<SaleCreatedEvent>, SaleCreatedEventHandler>();
+            builder.Services.AddScoped<INotificationHandler<ItemCancelledEvent>, ItemCancelledEventHandler>();
+            builder.Services.AddScoped<INotificationHandler<SaleCancelledEvent>, SaleCancelledEventHandler>();
+            builder.Services.AddScoped<INotificationHandler<SaleModifiedEvent>, SaleModifiedEventHandler>();
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 

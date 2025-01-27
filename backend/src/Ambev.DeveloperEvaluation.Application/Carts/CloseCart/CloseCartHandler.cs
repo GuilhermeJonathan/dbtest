@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Domain.Events.Sales.SaleCreated;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MediatR;
@@ -12,6 +13,7 @@ public class CloseCartHandler : IRequestHandler<CloseCartCommand, CloseCartRespo
     private readonly ICartRepository _cartRepository;
     private readonly IProductCartRepository _productCartRepository;
     private readonly ISaleRepository _saleRepository;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// Initializes a new instance of CloseCartHandler
@@ -19,11 +21,12 @@ public class CloseCartHandler : IRequestHandler<CloseCartCommand, CloseCartRespo
     /// <param name="cartRepository">The cart repository</param>
     /// <param name="productCartRepository">The productCart repository</param>
     /// <param name="validator">The validator for CloseCartCommand</param>
-    public CloseCartHandler(ICartRepository cartRepository, IProductCartRepository productCartRepository, ISaleRepository saleRepository)
+    public CloseCartHandler(ICartRepository cartRepository, IProductCartRepository productCartRepository, ISaleRepository saleRepository, IMediator mediator)
     {
         _cartRepository = cartRepository;
         _productCartRepository = productCartRepository;
         _saleRepository = saleRepository;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -56,8 +59,11 @@ public class CloseCartHandler : IRequestHandler<CloseCartCommand, CloseCartRespo
             TotalDiscount = existingCart.GetTotalDisccounts(),
             TotalPrice = existingCart.GetTotal()
         };
-        
+
         var sale = await _saleRepository.CreateAsync(newSale, cancellationToken);
+
+        //event SaleCreatedEvent
+        await _mediator.Publish(new SaleCreatedEvent(sale.Id, existingCart.Id), cancellationToken);
 
         return new CloseCartResponse { Success = true };
     }
