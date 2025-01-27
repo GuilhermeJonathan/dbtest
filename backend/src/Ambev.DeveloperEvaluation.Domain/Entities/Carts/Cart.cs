@@ -1,6 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
@@ -61,7 +60,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts
             User = user;
             UpdatedAt = DateTime.UtcNow;
         }
-        
+
         /// <summary>
         /// Adds a product to the cart.
         /// </summary>
