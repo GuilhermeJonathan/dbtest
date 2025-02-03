@@ -1,5 +1,4 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
-using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using Ambev.DeveloperEvaluation.Domain.Entities.Products;
@@ -116,6 +115,72 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
 
             // Then
             await act.Should().ThrowAsync<FluentValidation.ValidationException>();
+        }
+
+        /// <summary>
+        /// Tests that creating a cart with more than 20 identical items throws an exception.
+        /// </summary>
+        [Fact(DisplayName = "Given more than 20 identical items When creating cart Then throws exception")]
+        public async Task Handle_MoreThan20IdenticalItems_ThrowsException()
+        {
+            // Given
+            var command = CreateCartHandlerTestData.GenerateCommandWithMoreThan20Items();
+            var user = new User { Id = command.UserId };
+
+            var cart = new Cart
+            {
+                Id = Guid.NewGuid(),
+                User = user,
+                Store = command.Store,
+                ProductsCart = new List<ProductCart>()
+            };
+
+
+            var products = new List<Product>();
+
+            foreach (var productCommand in command.Products)
+            {
+                var product = new Product
+                {
+                    Id = productCommand.ProductId
+                };
+
+                products.Add(product);
+
+                cart.ProductsCart.Add(new ProductCart
+                {
+                    Product = product,
+                    Cart = cart,
+                    Quantity = productCommand.Quantity
+                });
+            }
+
+            var result = new CreateCartResult
+            {
+                Id = cart.Id,
+            };
+
+            _mapper.Map<Cart>(command).Returns(cart);
+            _mapper.Map<CreateCartResult>(cart).Returns(result);
+
+            _cartRepository.CreateAsync(Arg.Any<Cart>(), Arg.Any<CancellationToken>())
+               .Returns(cart);
+
+            _userRepository.GetByIdAsync(command.UserId, Arg.Any<CancellationToken>())
+                .Returns(user);
+
+            foreach (var product in products)
+            {
+                _productRepository.GetByIdAsync(product.Id, Arg.Any<CancellationToken>())
+                    .Returns(product);
+            }
+
+            // When
+            Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
+
+            // Then
+            await act.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("It's not possible to sell above 20 identical items");
         }
     }
 }

@@ -51,7 +51,7 @@ public class CloseCartHandler : IRequestHandler<CloseCartCommand, CloseCartRespo
             throw new InvalidOperationException($"Cart with id {command.Id} cannot be closed");
 
         existingCart.SetClosed();
-        existingCart = await _cartRepository.UpdateAsync(existingCart, cancellationToken);
+        await _cartRepository.UpdateAsync(existingCart, cancellationToken);
 
         var newSale = new Domain.Entities.Sales.Sale()
         {
@@ -63,7 +63,8 @@ public class CloseCartHandler : IRequestHandler<CloseCartCommand, CloseCartRespo
         var sale = await _saleRepository.CreateAsync(newSale, cancellationToken);
 
         //event SaleCreatedEvent
-        await _mediator.Publish(new SaleCreatedEvent(sale.Id, existingCart.Id), cancellationToken);
+        if(sale != null)
+            await _mediator.Publish(new SaleCreatedEvent(sale.Id, existingCart.Id), cancellationToken);
 
         return new CloseCartResponse { Success = true };
     }

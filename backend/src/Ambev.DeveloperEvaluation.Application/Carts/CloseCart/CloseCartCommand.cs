@@ -12,6 +12,11 @@ public record CloseCartCommand : IRequest<CloseCartResponse>
     /// </summary>
     public Guid Id { get; }
 
+    public CloseCartCommand()
+    {
+        
+    }
+
     /// <summary>
     /// Initializes a new instance of CloseCartCommand
     /// </summary>
