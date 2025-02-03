@@ -135,7 +135,6 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
                 ProductsCart = new List<ProductCart>()
             };
 
-
             var products = new List<Product>();
 
             foreach (var productCommand in command.Products)
@@ -181,6 +180,72 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
             // Then
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage("It's not possible to sell above 20 identical items");
+        }
+
+        /// <summary>
+        /// Tests that no discounts are allowed for quantities below 4 items.
+        /// </summary>
+        [Fact(DisplayName = "Given less than 4 items When creating cart Then no discounts are applied")]
+        public async Task Handle_LessThan4Items_NoDiscountsApplied()
+        {
+            // Given
+            var command = CreateCartHandlerTestData.GenerateValidCommandWithItems(3);
+            var user = new User { Id = command.UserId };
+
+            var cart = new Cart
+            {
+                Id = Guid.NewGuid(),
+                User = user,
+                Store = command.Store,
+                ProductsCart = new List<ProductCart>()
+            };
+
+            var products = new List<Product>();
+
+            foreach (var productCommand in command.Products)
+            {
+                var product = new Product
+                {
+                    Id = productCommand.ProductId
+                };
+
+                products.Add(product);
+
+                cart.ProductsCart.Add(new ProductCart
+                {
+                    Product = product,
+                    Cart = cart,
+                    Quantity = productCommand.Quantity
+                });
+            }
+
+            var result = new CreateCartResult
+            {
+                Id = cart.Id,
+            };
+
+            _mapper.Map<Cart>(command).Returns(cart);
+            _mapper.Map<CreateCartResult>(cart).Returns(result);
+
+            _cartRepository.CreateAsync(Arg.Any<Cart>(), Arg.Any<CancellationToken>())
+               .Returns(cart);
+
+            _userRepository.GetByIdAsync(command.UserId, Arg.Any<CancellationToken>())
+                .Returns(user);
+
+            foreach (var product in products)
+            {
+                _productRepository.GetByIdAsync(product.Id, Arg.Any<CancellationToken>())
+                    .Returns(product);
+            }
+            // When
+            var createCartResult = await _handler.Handle(command, CancellationToken.None);
+
+            // Then
+            createCartResult.Should().NotBeNull();
+            createCartResult.Id.Should().Be(cart.Id);
+            createCartResult.TotalDiscount.Should().Be(0); // No discounts applied
+            await _cartRepository.Received(1).CreateAsync(Arg.Any<Cart>(), Arg.Any<CancellationToken>());
         }
     }
 }

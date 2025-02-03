@@ -81,8 +81,11 @@ public class CreateCartHandler : IRequestHandler<CreateCartCommand, CreateCartRe
             cart.AddProductCart(listProducts);
 
         }
+        
         var createdCart = await _cartRepository.CreateAsync(cart, cancellationToken);
         var result = _mapper.Map<CreateCartResult>(createdCart);
+        result.TotalDiscount = createdCart.GetTotalDisccounts();
+
         return result;
     }
 }

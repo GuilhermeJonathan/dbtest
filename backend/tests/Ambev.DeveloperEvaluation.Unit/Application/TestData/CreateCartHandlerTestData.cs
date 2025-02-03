@@ -46,6 +46,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.TestData
             .RuleFor(p => p.Quantity, f => f.Random.Int(21, 30));
 
         /// <summary>
+        /// Configures the Faker to generate CreateCartCommand entities with a product having less than 3 items.
+        /// </summary>
+        private static readonly Faker<ProductsCartCommand> createProductWithLessThan3ItemsFaker = new Faker<ProductsCartCommand>()
+            .RuleFor(p => p.ProductId, f => f.Random.Guid())
+            .RuleFor(p => p.Quantity, f => f.Random.Int(1, 2));
+
+
+        /// <summary>
         /// Generates a valid cart entity with randomized data.
         /// The generated cart will have all properties populated with valid values
         /// that meet the system's validation requirements.
@@ -65,6 +73,18 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.TestData
         {
             var command = createCartHandlerFaker.Generate();
             command.Products = createProductWithMoreThan20ItemsFaker.Generate(1);
+            return command;
+        }
+
+        /// <summary>
+        /// Generates a valid cart entity with a specified number of items.
+        /// </summary>
+        /// <param name="numberOfItems">The number of items to add to the cart.</param>
+        /// <returns>A valid Cart entity with the specified number of items.</returns>
+        public static CreateCartCommand GenerateValidCommandWithItems(int numberOfItems)
+        {
+            var command = createCartHandlerFaker.Generate();
+            command.Products = createProductWithLessThan3ItemsFaker.Generate(numberOfItems);
             return command;
         }
     }

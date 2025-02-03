@@ -14,4 +14,5 @@ public class CreateCartResult
     /// </summary>
     /// <value>A GUID that uniquely identifies the created cart in the system.</value>
     public Guid Id { get; set; }
+    public decimal TotalDiscount { get; set; }
 }
